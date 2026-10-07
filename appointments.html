@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Appointments — ClinicDesk</title>
+  <style>
+    :root {
+      --teal: #0F4C4C;
+      --teal-dark: #0A3838;
+      --sage: #E8EDE9;
+      --card: #FDFDFB;
+      --slate: #2D3B3D;
+      --slate-soft: #6B7A7C;
+      --clay: #D97757;
+      --clay-dark: #C2613F;
+      --border: #D7DFDA;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--sage);
+      color: var(--slate);
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .page {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: var(--teal);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .back-btn:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--teal-dark);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      color: var(--slate-soft);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-label {
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-soft);
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .form-grid input,
+    .form-grid textarea {
+      font-family: Arial, sans-serif;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--sage);
+      color: var(--slate);
+      flex: 1 1 180px;
+      min-width: 0;
+    }
+
+    .form-grid textarea {
+      resize: vertical;
+      min-height: 42px;
+    }
+
+    .form-grid input:focus,
+    .form-grid textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      background: var(--card);
+    }
+
+    .add-btn {
+      padding: 10px 22px;
+      background: var(--clay);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .add-btn:hover { background: var(--clay-dark); }
+    .add-btn:active { transform: scale(0.98); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      text-align: left;
+      font-size: 0.73rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-soft);
+      background: var(--sage);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 13px 16px;
+      font-size: 0.88rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--slate);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:not(:first-child):hover td { background: var(--sage); }
+
+    .notes-text {
+      color: var(--slate-soft);
+      font-size: 0.8rem;
+      margin-top: 3px;
+    }
+
+    .edit-btn, .delete-btn {
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+
+    .edit-btn { background: var(--teal); color: white; }
+    .edit-btn:hover { background: var(--teal-dark); }
+    .delete-btn { background: var(--clay); color: white; }
+    .delete-btn:hover { background: var(--clay-dark); }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--slate-soft);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 24px 14px; }
+      .form-grid { flex-direction: column; }
+      .add-btn { width: 100%; }
+      th, td { padding: 10px 12px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <a class="back-btn" href="home.html">← Back to Home</a>
+
+    <h1>Appointments</h1>
+    <p class="subtitle">Schedule and manage patient visits</p>
+
+    <div class="panel">
+      <div class="panel-label">Add appointment</div>
+      <div class="form-grid">
+        <input type="date" id="dateInput">
+        <input type="time" id="timeInput">
+        <input type="text" id="patientInput" placeholder="Patient name">
+        <textarea id="notesInput" placeholder="Notes / reason (optional)"></textarea>
+        <button class="add-btn" id="addButton">Add appointment</button>
+      </div>
+    </div>
+
+    <table id="appointmentTable">
+      <tr>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Patient</th>
+        <th>Notes</th>
+        <th>Actions</th>
+      </tr>
+    </table>
+
+  </div>
+
+  <script>
+    let appointments = [];
+    let apptId = 1;
+    let editingId = null;
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "—";
+      let parts = dateStr.split("-");
+      return parts[2] + "/" + parts[1] + "/" + parts[0];
+    }
+
+    function formatTime(timeStr) {
+      if (!timeStr) return "—";
+      let parts = timeStr.split(":");
+      let h = parseInt(parts[0]);
+      let m = parts[1];
+      let ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12 || 12;
+      return h + ":" + m + " " + ampm;
+    }
+
+    function addAppointment() {
+      let dateInput    = document.getElementById("dateInput");
+      let timeInput    = document.getElementById("timeInput");
+      let patientInput = document.getElementById("patientInput");
+      let notesInput   = document.getElementById("notesInput");
+      let addButton    = document.getElementById("addButton");
+
+      if (editingId !== null) {
+        let appt = appointments.find(function(a) { return a.id === editingId; });
+        appt.date    = dateInput.value;
+        appt.time    = timeInput.value;
+        appt.patient = patientInput.value;
+        appt.notes   = notesInput.value;
+        editingId = null;
+        addButton.textContent = "Add appointment";
+      } else {
+        let newAppt = {
+          id:      apptId++,
+          date:    dateInput.value,
+          time:    timeInput.value,
+          patient: patientInput.value,
+          notes:   notesInput.value
+        };
+        appointments.push(newAppt);
+      }
+
+      dateInput.value    = "";
+      timeInput.value    = "";
+      patientInput.value = "";
+      notesInput.value   = "";
+
+      renderAppointments();
+    }
+
+    function editAppointment(id) {
+      let appt = appointments.find(function(a) { return a.id === id; });
+      document.getElementById("dateInput").value    = appt.date;
+      document.getElementById("timeInput").value    = appt.time;
+      document.getElementById("patientInput").value = appt.patient;
+      document.getElementById("notesInput").value   = appt.notes;
+      editingId = id;
+      document.getElementById("addButton").textContent = "Update appointment";
+    }
+
+    function deleteAppointment(id) {
+      appointments = appointments.filter(function(a) { return a.id !== id; });
+      renderAppointments();
+    }
+
+    function renderAppointments() {
+      let table = document.getElementById("appointmentTable");
+
+      table.innerHTML = `
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Patient</th>
+          <th>Notes</th>
+          <th>Actions</th>
+        </tr>
+      `;
+
+      if (appointments.length === 0) {
+        let row  = document.createElement("tr");
+        let cell = document.createElement("td");
+        cell.colSpan     = 5;
+        cell.className   = "empty-state";
+        cell.textContent = "No appointments yet — add one above.";
+        row.appendChild(cell);
+        table.appendChild(row);
+        return;
+      }
+
+      let sorted = appointments.slice().sort(function(a, b) {
+        if (a.date !== b.date) return a.date > b.date ? 1 : -1;
+        return a.time > b.time ? 1 : -1;
+      });
+
+      sorted.forEach(function(appt) {
+        let row = document.createElement("tr");
+
+        let dateCell = document.createElement("td");
+        dateCell.textContent = formatDate(appt.date);
+
+        let timeCell = document.createElement("td");
+        timeCell.textContent = formatTime(appt.time);
+
+        let patientCell = document.createElement("td");
+        patientCell.textContent = appt.patient;
+
+        let notesCell = document.createElement("td");
+        notesCell.innerHTML = appt.notes
+          ? '<span class="notes-text">' + appt.notes + '</span>'
+          : '<span class="notes-text">—</span>';
+
+        let actionCell = document.createElement("td");
+
+        let editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className   = "edit-btn";
+        editBtn.onclick     = function() { editAppointment(appt.id); };
+
+        let deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.className   = "delete-btn";
+        deleteBtn.onclick     = function() { deleteAppointment(appt.id); };
+
+        actionCell.appendChild(editBtn);
+        actionCell.appendChild(deleteBtn);
+
+        row.appendChild(dateCell);
+        row.appendChild(timeCell);
+        row.appendChild(patientCell);
+        row.appendChild(notesCell);
+        row.appendChild(actionCell);
+
+        table.appendChild(row);
+      });
+    }
+
+    document.getElementById("addButton").addEventListener("click", addAppointment);
+
+    renderAppointments();
+  </script>
+
+</body>
+</html>

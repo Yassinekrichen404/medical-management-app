@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Contacts — Clinic Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #0F4C4C;
+      --teal-dark: #0A3838;
+      --sage: #E8EDE9;
+      --card: #FDFDFB;
+      --slate: #2D3B3D;
+      --slate-soft: #6B7A7C;
+      --clay: #D97757;
+      --clay-dark: #C2613F;
+      --border: #D7DFDA;
+      --doctor: #0F4C4C;
+      --doctor-bg: #E1ECEA;
+      --patient: #B5651D;
+      --patient-bg: #F3E6D8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--sage);
+      color: var(--slate);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 55px 24px;
+    }
+
+    .page {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 2.1rem;
+      letter-spacing: -0.01em;
+      margin: 0 0 4px;
+      color: var(--teal-dark);
+    }
+
+    .subtitle {
+      color: var(--slate-soft);
+      font-size: 0.95rem;
+      margin: 0 0 32px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 2px rgba(15, 76, 76, 0.04);
+    }
+
+    .panel-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-soft);
+      margin: 0 0 14px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--sage);
+      color: var(--slate);
+      flex: 1 1 160px;
+      min-width: 0;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    input[type="text"]::placeholder {
+      color: var(--slate-soft);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--teal);
+      background: var(--card);
+    }
+
+    button {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.1s ease;
+    }
+
+    #addButton {
+      background: var(--clay);
+      color: #fff;
+      padding: 11px 22px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    #addButton:hover {
+      background: var(--clay-dark);
+    }
+
+    #addButton:active {
+      transform: scale(0.98);
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 11px 14px 11px 38px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--slate);
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    .search-wrap::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      transform: translateY(-50%);
+      border: 2px solid var(--slate-soft);
+      border-radius: 50%;
+    }
+
+    .search-wrap::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      top: 50%;
+      width: 7px;
+      height: 2px;
+      background: var(--slate-soft);
+      transform: translateY(7px) rotate(45deg);
+      transform-origin: left center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th {
+      text-align: left;
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--slate-soft);
+      background: var(--sage);
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 18px;
+      font-size: 0.92rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--slate);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover td,
+    tr:not(:first-child):hover td {
+      background: var(--sage);
+    }
+
+    .role-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+
+    .role-doctor {
+      background: var(--doctor-bg);
+      color: var(--doctor);
+    }
+
+    .role-patient {
+      background: var(--patient-bg);
+      color: var(--patient);
+    }
+
+    .role-other {
+      background: #EFEFEF;
+      color: var(--slate-soft);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--slate-soft);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 28px 14px; }
+      .form-row { flex-direction: column; }
+      input[type="text"] { flex: 1 1 auto; }
+      #addButton { width: 100%; }
+      th, td { padding: 11px 12px; font-size: 0.85rem; }
+    }
+    .action-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  margin-right: 5px;
+}
+
+.edit-btn {
+  background: var(--teal);
+  color: white;
+}
+
+.edit-btn:hover {
+  background: var(--teal-dark);
+}
+
+.delete-btn {
+  background: var(--clay);
+  color: white;
+}
+
+.delete-btn:hover {
+  background: var(--clay-dark);
+}
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <h1>Contacts</h1>
+    <p class="subtitle">Patients and staff on file</p>
+
+    <div class="panel">
+      <p class="panel-label">Add contact</p>
+      <div class="form-row">
+        <input type="text" id="nameInput" placeholder="Name and last name">
+        <input type="text" id="phoneInput" placeholder="Phone number">
+        <input type="text" id="roleInput" placeholder="Role (patient/doctor)">
+        <button id="addButton">Add contact</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Search by name">
+      </div>
+    </div>
+
+<table id="contactTable">
+  <tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Role</th>
+    <th>Actions</th>
+  </tr>
+</table>
+
+  </div>
+
+  <script>
+let contacts = [];
+let contactId = 1;
+let editingId = null;
+
+
+function addContact() {
+
+  let nameInput = document.getElementById("nameInput");
+  let phoneInput = document.getElementById("phoneInput");
+  let roleInput = document.getElementById("roleInput");
+  let addButton = document.getElementById("addButton");
+
+
+  // UPDATE MODE
+  if (editingId !== null) {
+
+    let contact = contacts.find(function(c){
+      return c.id === editingId;
+    });
+
+
+    contact.name = nameInput.value;
+    contact.phone = phoneInput.value;
+    contact.role = roleInput.value;
+
+
+    editingId = null;
+
+    addButton.textContent = "Add contact";
+
+
+  } 
+
+  // ADD MODE
+  else {
+
+    let newContact = {
+
+      id: contactId++,
+      name: nameInput.value,
+      phone: phoneInput.value,
+      role: roleInput.value
+
+    };
+
+
+    contacts.push(newContact);
+
+  }
+
+
+  nameInput.value = "";
+  phoneInput.value = "";
+  roleInput.value = "";
+
+
+  renderFilteredContacts(contacts);
+
+}
+
+
+
+function editContact(id){
+
+  let contact = contacts.find(c => c.id === id);
+
+
+  document.getElementById("nameInput").value = contact.name;
+  document.getElementById("phoneInput").value = contact.phone;
+  document.getElementById("roleInput").value = contact.role;
+
+
+  editingId = id;
+
+  document.getElementById("addButton").textContent = "Update contact";
+
+}
+
+
+
+function deleteContact(id){
+
+  contacts = contacts.filter(c => c.id !== id);
+
+  renderFilteredContacts(contacts);
+
+}
+
+
+
+function searchContacts(){
+
+  let searchInput = document.getElementById("searchInput");
+
+  let searchTerm = searchInput.value.toLowerCase();
+
+
+  let filtered = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(searchTerm)
+  );
+
+
+  renderFilteredContacts(filtered);
+
+}
+
+
+
+function roleClass(role){
+
+  let r = role.toLowerCase();
+
+  if(r === "doctor")
+    return "role-pill role-doctor";
+
+  if(r === "patient")
+    return "role-pill role-patient";
+
+
+  return "role-pill role-other";
+
+}
+
+
+
+function renderFilteredContacts(filtered){
+
+  let table = document.getElementById("contactTable");
+
+
+  table.innerHTML =
+  `
+  <tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Role</th>
+    <th>Actions</th>
+  </tr>
+  `;
+
+
+
+  if(filtered.length === 0){
+
+    let row = document.createElement("tr");
+
+    let cell = document.createElement("td");
+
+    cell.colSpan = 4;
+
+    cell.className="empty-state";
+
+    cell.textContent="No contacts yet — add one above.";
+
+    row.appendChild(cell);
+
+    table.appendChild(row);
+
+    return;
+  }
+
+
+
+  filtered.forEach(contact => {
+
+
+    let row=document.createElement("tr");
+
+
+    let nameCell=document.createElement("td");
+    nameCell.textContent=contact.name;
+
+
+    let phoneCell=document.createElement("td");
+    phoneCell.textContent=contact.phone;
+
+
+    let roleCell=document.createElement("td");
+
+    let pill=document.createElement("span");
+
+    pill.className=roleClass(contact.role);
+
+    pill.textContent=contact.role;
+
+    roleCell.appendChild(pill);
+
+
+
+    let actionCell=document.createElement("td");
+
+
+
+    let editButton=document.createElement("button");
+
+    editButton.textContent="Edit";
+
+    editButton.className="action-btn edit-btn";
+
+    editButton.onclick=function(){
+
+      editContact(contact.id);
+
+    };
+
+
+
+    let deleteButton=document.createElement("button");
+
+    deleteButton.textContent="Delete";
+
+    deleteButton.className="action-btn delete-btn";
+
+    deleteButton.onclick=function(){
+
+      deleteContact(contact.id);
+
+    };
+
+
+
+    actionCell.appendChild(editButton);
+
+    actionCell.appendChild(deleteButton);
+
+
+
+    row.appendChild(nameCell);
+
+    row.appendChild(phoneCell);
+
+    row.appendChild(roleCell);
+
+    row.appendChild(actionCell);
+
+
+
+    table.appendChild(row);
+
+
+  });
+
+
+}
+
+
+
+document
+.getElementById("addButton")
+.addEventListener("click", addContact);
+
+
+
+document
+.getElementById("searchInput")
+.addEventListener("input", searchContacts);
+
+
+
+renderFilteredContacts(contacts);
+  </script>
+
+</body>
+</html>
